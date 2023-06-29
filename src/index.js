@@ -45,57 +45,50 @@ client.on("messageCreate", async (message) => {
     const category = interactionChannel.parent;
 
     const userChannel = Array.from(category.children.cache.values()).find(
-      ({ name }) => name.includes("text")
+      ({ name }) => name.includes("general")
     );
 
     const usersInLobby = Array.from(userChannel.members.values());
 
     let filtered = usersInLobby.filter((user) => {
-        return user.user.bot === false;
-    })
+      return user.user.bot === false;
+    });
 
-
-      await filtered.forEach((user, index) => {
-        let count = index % 3;
-        if(user.user.bot !== true) {
+    await filtered.forEach((user) => {
+      let count = 0;
+      if (user.user.bot !== true) {
         user.voice.setChannel(channels[count]);
-        }
-        if (count === 2) {
-          count = 0;
-        } else {
-          count++;
-        }
-        console.log(`Added ${user.user.username} to room ${count}`)
-      })
-
+      }
+      if (count === 2) {
+        count = 0;
+      } else {
+        count++;
+      }
+      console.log(`Added ${user.user.username} to room ${count}`);
+    });
   }
 });
 
-client.on("message", message => {
-  if (message.content.startsWith("!deletechannel")) {
-    // Get the channel name from the command
-    //const channelName = message.content.substring("!deletechannel".length).trim();
+client.on("messageCreate", (message) => {
+  if (message.content === "!delete") {
     const channelName = "Breakout-";
 
     for (let i = 1; i <= 3; i++) {
-	// Find the channel by name
-	const channel = message.guild.channels.cache.find(ch => ch.name === `${channelName}${i}`);
-	// Delete the channel
-	channel.delete()
-		.then(() => {
-		  message.reply(`Channel '${channelName}${i}' has been deleted.`);
-		})
-		.catch(error => {
-		  console.error(`Error deleting channel: ${error}`);
-		  message.reply('An error occurred while deleting the channel.');
-		});
-
+      
+      const channel = message.guild.channels.cache.find(
+        (ch) => ch.name === `${channelName}${i}`
+        
+      );
+      channel
+        .delete()
+        .then(() => {
+          message.reply(`Channel '${channelName}${i}' has been deleted.`);
+        })
+        .catch((error) => {
+          console.error(`Error deleting channel: ${error}`);
+          message.reply("An error occurred while deleting the channel.");
+        });
     }
-
-    if (!channel) {
-      message.reply(`Channel '${channelName}' not found.`);
-    } else {
-        }
   }
 });
 

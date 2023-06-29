@@ -54,7 +54,7 @@ client.on("messageCreate", async (message) => {
         return user.user.bot === false;
     })
 
-   
+
       await filtered.forEach((user, index) => {
         let count = index % 3;
         if(user.user.bot !== true) {
@@ -67,7 +67,35 @@ client.on("messageCreate", async (message) => {
         }
         console.log(`Added ${user.user.username} to room ${count}`)
       })
-    
+
+  }
+});
+
+client.on("message", message => {
+  if (message.content.startsWith("!deletechannel")) {
+    // Get the channel name from the command
+    //const channelName = message.content.substring("!deletechannel".length).trim();
+    const channelName = "Breakout-";
+
+    for (let i = 1; i <= 3; i++) {
+	// Find the channel by name
+	const channel = message.guild.channels.cache.find(ch => ch.name === `${channelName}${i}`);
+	// Delete the channel
+	channel.delete()
+		.then(() => {
+		  message.reply(`Channel '${channelName}${i}' has been deleted.`);
+		})
+		.catch(error => {
+		  console.error(`Error deleting channel: ${error}`);
+		  message.reply('An error occurred while deleting the channel.');
+		});
+
+    }
+
+    if (!channel) {
+      message.reply(`Channel '${channelName}' not found.`);
+    } else {
+        }
   }
 });
 

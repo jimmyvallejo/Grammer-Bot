@@ -1,4 +1,5 @@
 const { Client, IntentsBitField } = require("discord.js");
+require("dotenv").config();
 
 const client = new Client({
   intents: [
@@ -14,6 +15,8 @@ client.on("ready", (c) => {
 });
 
 client.on("messageCreate", async (message) => {
+  let channels = [];
+
   if (message.content === "!breakout") {
     const modRole = message.guild.roles.cache.find(
       (role) => role.name === "Mod"
@@ -30,33 +33,42 @@ client.on("messageCreate", async (message) => {
           type: 2,
           parent: message.channel.parentId,
         });
-
-        
+        channels.push(channel);
       }
 
       message.reply("Created 3 breakout channels!");
     } else {
       message.reply("You don't have permission to create channels.");
     }
-    let currentChannel = await message.channel.parentId;
-    let userChannel = await client.channels.cache.get(currentChannel)
+
+    const interactionChannel = message.channel;
+    const category = interactionChannel.parent;
+
+    const userChannel = Array.from(category.children.cache.values()).find(
+      ({ name }) => name.includes("text")
+    );
+
+    const usersInLobby = Array.from(userChannel.members.values());
+
+    let filtered = usersInLobby.filter((user) => {
+        return user.user.bot === false;
+    })
+
    
-       let users = userChannel.members.map((user) => {
-        return user.id
-       })
-       console.log(users)
+      await filtered.forEach((user, index) => {
+        let count = index % 3;
+        if(user.user.bot !== true) {
+        user.voice.setChannel(channels[count]);
+        }
+        if (count === 2) {
+          count = 0;
+        } else {
+          count++;
+        }
+        console.log(`Added ${user.user.username} to room ${count}`)
+      })
+    
   }
 });
 
-client.on("messageCreate", async (message) => {
-  if (message.content === "!myroles") {
-    const roles = message.member.roles.cache
-      .map((role) => role.name)
-      .join(", ");
-    message.reply(`Your roles: ${roles}`);
-  }
-});
-
-client.login(
-  "MTEyMzcwNTMzNzI1ODcwNDk5Mg.GlqiTh.gHWiSy_F_hi8_AFid8DNONbWwEh0Mec1ipgYJQ"
-);
+client.login(`${process.env.GITHUB_TOKEN}`);

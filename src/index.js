@@ -69,6 +69,8 @@ client.on("messageCreate", async (message) => {
   }
 });
 
+
+
 client.on("messageCreate", async (message) => {
   if (message.content === "!delete") {
     const channelName = "Breakout-";
@@ -95,13 +97,13 @@ client.on("messageCreate", async (message) => {
       
       console.log(user.user.id);
      const member = await message.guild.members.fetch(user.user.id);
-     console.log(member)
       if (member.voice) {
         member.voice
           .setChannel(voiceChannel)
           .catch((error) => console.error(`Error moving member: ${error}`));
       } else {
         console.log(`User ${user.user.username} is not in a voice channel.`);
+       
       }
     });
 

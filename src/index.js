@@ -95,7 +95,7 @@ client.on("messageCreate", async (message) => {
 
     const movePromises = filtered.map(async (user) => {
       
-      console.log(user.user.id);
+     
      const member = await message.guild.members.fetch(user.user.id);
       if (member.voice) {
         member.voice
@@ -123,4 +123,4 @@ client.on("messageCreate", async (message) => {
 });
 
 
-client.login(`${process.env.GITHUB_TOKEN}`);
+client.login(`${process.env.DISCORD_TOKEN}`);
